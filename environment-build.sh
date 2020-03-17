@@ -83,13 +83,24 @@ echo "waiting for our servers to become available...please be patient"
 aws ec2 wait instance-status-ok --instance-ids $TEAM_SERVER_SETUP
 aws ec2 wait instance-status-ok --instance-ids $COMMAND_SERVER_SETUP
 
-COMMAND_SERVER_IP=$(aws ec2 describe-instances --instance-ids $COMMAND_SERVER_SETUP --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName')
-TEAM_SERVER_IP=$(aws ec2 describe-instances --instance-ids $TEAM_SERVER_SETUP --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName')
+COMMAND_SERVER_DNS=$(aws ec2 describe-instances --instance-ids $COMMAND_SERVER_SETUP --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName')
+TEAM_SERVER_DNS=$(aws ec2 describe-instances --instance-ids $TEAM_SERVER_SETUP --query 'Reservations[0].Instances[0].NetworkInterfaces[0].Association.PublicDnsName')
 
 #format the dns addresses so they look nice on the cmd line
-COMMAND_SERVER_IP=$(echo $COMMAND_SERVER_IP | cut -d "\"" -f 2)
-TEAM_SERVER_IP=$(echo $TEAM_SERVER_IP | cut -d "\"" -f 2)
+COMMAND_SERVER_DNS=$(echo $COMMAND_SERVER_DNS | cut -d "\"" -f 2)
+TEAM_SERVER_DNS=$(echo $TEAM_SERVER_DNS | cut -d "\"" -f 2)
 echo "---"
 echo " "
-echo "You can now SSH into your C2-node: ssh -i c2-server.pem ubuntu@$COMMAND_SERVER_IP"
-echo "You can now SSH into your TeamServer: ssh -i teamserver.pem ubuntu@$TEAM_SERVER_IP"
+echo "You can now SSH into your C2-node: ssh -i c2-server.pem ubuntu@$COMMAND_SERVER_DNS"
+echo "You can now SSH into your TeamServer: ssh -i teamserver.pem ubuntu@$TEAM_SERVER_DNS"
+
+# generate heredoc for our various files
+cat << EOF > .htaccess
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/(admin/get.php|login/process.php|news.php)/?$ [NC]
+RewriteRule ^.*$ http://$TEAM_SERVER_DNS:5000%{REQUEST_URI} [P]
+RewriteRule ^.*$ https://google.com/ [L,R=302]
+EOF
+
+chmod +x ansible.sh
+./ansible.sh $TEAM_SERVER_DNS $COMMAND_SERVER_DNS
