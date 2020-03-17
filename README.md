@@ -16,7 +16,7 @@ If you don't want to run the script as sudo you will have to update your /etc/an
 *TEAM SERVER DNS FROM ./environement-build.sh output*
 [c2]
 *COMMAND SERVER DNS FROM ./environment-build.sh output*
-
+```
 # Upcoming Release
 
 The next version of the release will utilize Ansible to configure the C2 node and the team server with the Empire framework. 
