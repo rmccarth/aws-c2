@@ -8,3 +8,9 @@ Run the script and provide it your aws_access_key as the first argument, and you
 ./environment-build.sh asasdfsafsf3q4243 789098760987asdfas
 ```
 
+# Upcoming Release
+
+The next version of the release will utilize Ansible to configure the C2 node and the team server with the Empire framework. 
+
+
+Inspired by: https://holdmybeersecurity.com/2018/04/30/tales-of-a-red-teamer-ub-2018
