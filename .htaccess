@@ -1,4 +1,0 @@
-RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/(admin/get.php|login/process.php|news.php)/?$ [NC]
-RewriteRule ^.*$ http://ec2-3-88-24-166.compute-1.amazonaws.com:5000%\{REQUEST_URI\} [P]
-RewriteRule ^.*$ https://google.com/ [L,R=302]
